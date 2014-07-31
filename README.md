@@ -16,6 +16,16 @@ This will replace `i am sad` with `I AM GREAT` on every file's content that is i
 
 This will replace any appearence of the string `i am scary` with `I AM SAFE!` on every `.txt` file that is on the directory `/home/lucio/advanced/` making a backup of each file on the directory `new_maybe` (creating the dir if not exist) and also print what is it doing (verbosing). A coffee? Sure..
 
+## Deployment
+
+I'm far from it, but at the moment you can [use an alias](http://askubuntu.com/a/17538/) to the joy of your fingers :)  
+After [download the script](https://github.com/lucio-martinez/rch/releases), add the following lines at the end of your `~/.bashrc` file:
+
+    # Adding the coolest Find and Replace tool
+    alias rch=/path/to/the/script/rch.sh
+
+Then run `. ~/.bashrc` or restart the machine. Now you should be able to run the program with `rch` at anytime!
+
 ## LICENSE
 
 GNU General Public License, Version 3. See the `LICENSE` file.
