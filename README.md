@@ -18,13 +18,24 @@ This will replace any appearence of the string `i am scary` with `I AM SAFE!` on
 
 ## Deployment
 
-I'm far from it, but at the moment you can [use an alias](http://askubuntu.com/a/17538/) to the joy of your fingers :)  
-After [download the script](https://github.com/lucio-martinez/rch/releases), add the following lines at the end of your `~/.bashrc` file:
+I'm far from it, but at the moment you can move it to the `/usr/bin` folder to use it from any place 
 
-    # Adding the coolest Find and Replace tool
-    alias rch=/path/to/the/script/rch.sh
+ 1. [Download the script](https://github.com/lucio-martinez/rch/releases)
 
-Then run `. ~/.bashrc` or restart the machine. Now you should be able to run the program with `rch` at anytime!
+ 2. Move it to the binaries folder with 
+
+  `sudo mv /path/to/the/downloaded/script/rch.sh /usr/bin/rch`
+
+ 3. Done!
+
+Now you may type `rch` on the terminal at anytime! You can reboot the machine and the script will be there. Enjoy it :)
+
+## Wishlist
+
+ - The target directory has to be full path. You should be able to enter relative paths too. I promese to change it quickly!
+
+ - It doesn't like special characters. For instance, entering `/` would break it. That's sad :(  
+   If you have a cool idea that may fix this, please share it!
 
 ## LICENSE
 
