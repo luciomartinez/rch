@@ -18,11 +18,11 @@ This will replace any appearence of the string `i am scary` with `I AM SAFE!` on
 
 ## Deployment
 
-I'm far from it, but at the moment you can move it to the `/usr/bin` folder to use it from any place 
+It's far from it, but at the moment you can move it to the `/usr/bin` folder to use it from any place
 
  1. [Download the script](https://github.com/lucio-martinez/rch/releases)
 
- 2. Move it to the binaries folder with 
+ 2. Move it to the binaries folder with
 
   `sudo mv /path/to/the/downloaded/script/rch.sh /usr/bin/rch`
 
@@ -32,8 +32,21 @@ Now you may type `rch` on the terminal at anytime! You can reboot the machine an
 
 ## Wishlist
 
- - It doesn't like special characters. For instance, entering `/` would break it. That's sad :(  
+ - It doesn't like special characters. For instance, entering `/` would break it. That's sad :(
    If you have a cool idea that may fix this, please share it! :)
+
+## Test
+
+There is a script that will test the application against the most common use cases to see if everything is working as spected.
+To test it, you need to edit the test script (the `test.sh` file) and change:
+
+ 1. The path to the package at line 8. Change it to your path or maybe alias to the application
+
+  `PACKAGE='./rch.sh'`
+
+ 2. The directory where to generate the test files at line 322-326
+
+  `local DIRECTORY="/home/user/testing/test_$$"`
 
 ## LICENSE
 
