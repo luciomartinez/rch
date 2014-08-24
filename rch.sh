@@ -9,11 +9,11 @@
 #   e.g. "xyz"
 # @param -n The new string that replaces the old one
 #   e.g. "abc"
-# @param -d The directory where the files to process are
+# @param -d The directory where the files to process are. Full or relative path
 #   e.g. "/home/you/foo/"
-# @param -p The path with a pattern of the files to process (ommited if directory provided)
+# @param -p The pattern of the files to process. Only full path. Ommited if directory provided
 #   e.g. "/home/you/foo/*.txt"
-# @param -b [OPTIONAL] A directory to place backups of every processed file
+# @param -b [OPTIONAL] A directory to place backups of every processed file. Full or relative path
 #   e.g. "/home/you/backup/foo"
 #
 # Credit where it's due.
@@ -34,9 +34,11 @@ print_help() {
   echo "Usage: $PACKAGE [OPTION]... -o TARGET -n SOURCE -d DIRECTORY -p PATH [-b BACKUP]"
   echo "Replace character(s) TARGET with character(s) SOURCE in the files on DIRECTORY or PATH."
   echo " "
-  echo "WARNING: be sure to don't place this file on the same directory than the one that you choice to process the files."
-  echo " "
-  echo "  -b                make a backup of each file processed on the BACKUP directory"
+  echo "  -n, --new         new string that replaces the old one"
+  echo "  -o, --old         old string that will be replaced"
+  echo "  -d, --directory   directory of files to be processed"
+  echo "  -p, --pattern     pattern of the files to be processed"
+  echo "  -b, --backup      make a backup of each file processed on the BACKUP directory"
   echo "  -h, --help        display this help and exit"
   echo "  --version         output version information and exit"
   echo "  -v, --verbose     explain what is being done"
@@ -55,14 +57,22 @@ print_error() {
 }
 
 
-# @param path
+# @param relative or fullpath
+# @returns the full path of the path entered
+get_full_path() {
+  echo `readlink -f $*` # Hum, so you know a better way to return on bash..
+}
+
+
+# @param fullpath
 create_directory_if_not_exists() {
   if [ ! -d $* ];
   then
     log " [+] Backup directory does not exist, creating it on '$BACKUP_DIR'..."
-    mkdir -p $*
+    mkdir -p "$*"
   fi
 }
+
 
 # DISABLED FUNCTION
 # Reason: shouldn't the OS free the /tmp folder when needed?
@@ -81,51 +91,59 @@ create_directory_if_not_exists() {
 replace_string_on_file() {
   log " [+] Replacing string '$1' with '$2' on file '$3'..."
   # Replace the strings on the file
-  sed "s/$1/$2/g" "$3" > $4 && mv $4 "$3"
+  sed "s/$1/$2/g" "$3" > "$4" && mv "$4" "$3"
 }
 
 
 # @param 1. Old string stored on the file(s) to be replaced
 # @param 2. New string that will replace the old one
 # @param 3. Directory where the file to process are
-# @param 4. Path with a pattern to the files to process (not used if Directory given)
+# @param 4. Pattern with a full path to the files to process (not used if Directory given)
 # @param 5. Backup directory where each processed file will be copied (use value 0 for not backup)
 # @param 6. ??
 # @param 7. And of course, profit!
 start_working() {
   local old="$1"
   local new="$2"
-  local dir="$3"
-  local path="$4"
+  local directory="$3"
+  local pattern="$4"
+  local target_dir='';
   local f;
   local readonly BACKUP_DIR="$5";
+  local readonly INITIAL_DIR="$(get_full_path '.')";
   local readonly TEMP_FILE="/tmp/out.tmp.$$";
 
   # If backup is required, the directory has to exist
   if [ "$BACKUP_DIR" != 0 ];
   then
     create_directory_if_not_exists "$BACKUP_DIR"
+    # Process using the full path of the directory
+    BACKUP_DIR="$(get_full_path $BACKUP_DIR)";
   fi
 
   # If directory *and* pattern were given simoultaneusly
   # we are going to use directory only.
   # If you think I'm wrong, change it ;)
-  if [ "$dir" != 0 ];
+  if [ "$directory" != 0 ];
   then
-    cd $dir
-    path="`dir $dir`"
+    # Get the full path of the target directory
+    target_dir="$(get_full_path $directory)"
+    # Change directory temporarily to the target
+    cd $target_dir
+    # Iterate over the files on the target directory
+    pattern="`ls -A $target_dir`"
   fi
 
-  # For every file in the path..
-  for f in $path;
+  # For every file in the pattern..
+  for f in $pattern;
   do
-    # Do nothing when processing the node to the actual dir
-    # that is called '.' (yep, a dot) on linux
+    # Do nothing when processing the node to the actual directory
+    # That is called '.' (yep, a dot) on linux
     if [ "$f" != '.' ];
     then
       # Check if it is a regular file
       # can be readable and writable
-      if [ -f $f -a -r $f -a -w $f ];
+      if [ -f "$f" -a -r "$f" -a -w "$f" ];
       then
         log " [+] Processing file '$f'..."
         # Check if we need to make a backup
@@ -133,28 +151,31 @@ start_working() {
         then
           # Now, please, do the backup
           log " [+] Making backup of file '$f'..."
-          cp "$f" "../$BACKUP_DIR/"
+          cp "$f" "$BACKUP_DIR"
         fi
         replace_string_on_file "$old" "$new" "$f" "$TEMP_FILE"
       else
-       log " [-] WARNING: Cannot process file $f"
+       log " [-] WARNING: Cannot process file '$f'"
       fi
     fi
   done
+
+  # Just in case, we go to the initial directory of the script
+  cd $INITIAL_DIR;
 }
 
 
 main() {
   # Define required parameters here
-  local r_old=0
   local r_new=0
+  local r_old=0
   local r_target=0
   # Passed values
   local backup_dir=0
   local s_new=''
   local s_old=''
   local target_directory=0
-  local target_path=0
+  local target_pattern=0
 
   #getopts
   while test $# -gt 0; do
@@ -172,7 +193,7 @@ main() {
           verbose=true
         shift
         ;;
-      -b)
+      -b|--backup)
         shift
           if test $# -gt 0;
           then
@@ -183,7 +204,7 @@ main() {
           fi
         shift
         ;;
-      -d)
+      -d|--directory)
         shift
           if test $# -gt 0;
           then
@@ -195,7 +216,7 @@ main() {
           fi
         shift
         ;;
-      -n)
+      -n|--new)
         shift
           if test $# -gt 0;
           then
@@ -207,7 +228,7 @@ main() {
           fi
         shift
         ;;
-      -o)
+      -o|--old)
         shift
           if test $# -gt 0;
           then
@@ -219,14 +240,14 @@ main() {
           fi
         shift
         ;;
-      -p)
+      -p|--pattern)
         shift
           if test $# -gt 0;
           then
-            target_path="$1"
+            target_pattern="$1"
             r_target=1
           else
-            print_error "No path specified"
+            print_error "No pattern specified"
             exit 1
           fi
         shift
@@ -239,14 +260,14 @@ main() {
   done
 
   # Check if all parameters were entered
-  if [ "$r_old" -ne 1 -o "$r_new" -ne 1 -o "$r_target" -ne 1 ]
+  if [ "$r_old" != 1 -o "$r_new" != 1 -o "$r_target" != 1 ]
   then
     print_error "missing required operands"
     exit 1
   fi
 
   # Everything is ok.. Now lets work!
-  start_working "$s_old" "$s_new" "$target_directory" "$target_path" "$backup_dir"
+  start_working "$s_old" "$s_new" "$target_directory" "$target_pattern" "$backup_dir"
 }
 
 main "$@"

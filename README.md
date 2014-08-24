@@ -32,10 +32,8 @@ Now you may type `rch` on the terminal at anytime! You can reboot the machine an
 
 ## Wishlist
 
- - The target directory has to be full path. You should be able to enter relative paths too. I promese to change it quickly!
-
  - It doesn't like special characters. For instance, entering `/` would break it. That's sad :(  
-   If you have a cool idea that may fix this, please share it!
+   If you have a cool idea that may fix this, please share it! :)
 
 ## LICENSE
 
