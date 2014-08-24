@@ -20,20 +20,20 @@ generate_sources() {
 	local readonly DIRECTORY="$2"
 	local readonly SOURCE_FILE_ONE="$3"
 	local readonly SOURCE_FILE_TWO="$4"
-	local readonly TMP='Hello World!'
+	local readonly OUTPUT='Hello World!'
 
 	# Create directory
 	mkdir "$DIRECTORY";
 
 	# Create the sources
-	TMP="FILE 1. This is going to be the only line. So - $OLD - should change and '$OLD' too."
-	# TMP=$TMP"\nThis is going to be $OLD on a first line."
-	# TMP=$TMP"\nThis is going to be $OLD on a second line."
-	# TMP=$TMP"\nThis is going to be $OLD on a third line."
+	OUTPUT="FILE 1. This is going to be the only line. So - $OLD - should change and '$OLD' too."
+	# OUTPUT=$OUTPUT"\nThis is going to be $OLD on a first line."
+	# OUTPUT=$OUTPUT"\nThis is going to be $OLD on a second line."
+	# OUTPUT=$OUTPUT"\nThis is going to be $OLD on a third line."
 	# Store the content
-	echo "$TMP" > "$SOURCE_FILE_ONE";
-	TMP="FILE 2. This is going to be the only line. So - $OLD - should change and '$OLD' too."
-	echo "$TMP" > "$SOURCE_FILE_TWO";
+	echo "$OUTPUT" > "$SOURCE_FILE_ONE";
+	OUTPUT="FILE 2. This is going to be the only line. So - $OLD - should change and '$OLD' too."
+	echo "$OUTPUT" > "$SOURCE_FILE_TWO";
 }
 
 
