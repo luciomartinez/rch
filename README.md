@@ -48,6 +48,10 @@ To test it, you need to edit the test script (the `test.sh` file) and change:
 
   `local DIRECTORY="/home/user/testing/test_$$"`
 
+Now run the script `./test.sh` and you should get `Test [N] passed!` for every test ran, where N is the number of the test ran starting from 1.
+
+![screenshoot](https://i.imgur.com/tYcnhB2.png)
+
 ## LICENSE
 
 GNU General Public License, Version 3. See the `LICENSE` file.
