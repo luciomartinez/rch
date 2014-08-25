@@ -131,13 +131,13 @@ check_results() {
     		# Check for errors
     		if [ ! -z "$should_be_empty" -o -z "$should_have_content" ];
     		then
-    			echo 1;
+    			echo 1; # Because things are not as expected, return error!
     			return;
     		fi
     		EXISTS=$(( $EXISTS + 1 ))
     	fi
 	done
-	# If it did not returned previously and
+	# If it didn't return previously and
 	# the amount of files presents are equal
 	# to the expected number, then everything is ok
 	if [[ $EXISTS == $SHOULD_EXISTS ]]; then
